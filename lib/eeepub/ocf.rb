@@ -97,8 +97,8 @@ module EeePub
           os << "application/epub+zip"
         end
         zipfile = Zip::ZipFile.open(output_path)
-        Dir.glob('**/*').each do |path|
-          zipfile.add(path, path)
+        Dir.glob("#{dir}/**/*").each do |path|
+          zipfile.add(path[dir.length+1..-1], path)
         end
         zipfile.commit
       end
@@ -118,13 +118,11 @@ module EeePub
 
     private
     def create_epub
-      FileUtils.chdir(dir) do
-        meta_inf = 'META-INF'
-        FileUtils.mkdir_p(meta_inf)
+      meta_inf = "#{dir}/META-INF"
+      FileUtils.mkdir_p(meta_inf)
 
-        container.save(File.join(meta_inf, 'container.xml'))
-        yield
-      end
+      container.save(File.join(meta_inf, 'container.xml'))
+      yield
 
     end
   end
